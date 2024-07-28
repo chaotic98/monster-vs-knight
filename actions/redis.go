@@ -41,3 +41,15 @@ func Set(key string, value int) {
 	rdb := initRedisClient()
 	rdb.Set(ctx, key, value, 0)
 }
+
+func Decrease(key string, dmg int) {
+	value, _ := Get(key)
+	value = value - dmg
+	Set(key, value)
+}
+
+func Increase(key string, heal int) {
+	value, _ := Get(key)
+	value = value + heal
+	Set(key, value)
+}
