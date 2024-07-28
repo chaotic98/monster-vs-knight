@@ -6,7 +6,14 @@ import (
 	"strconv"
 )
 
-func initRedisClient() *redis.Client {
+var RedisClient *redis.Client
+
+func init() {
+	ctx := context.Background()
+	RedisClient = initRedisClient(ctx)
+}
+
+func initRedisClient(ctx context.Context) *redis.Client {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
 		Password: "",
@@ -22,14 +29,12 @@ func initRedisClient() *redis.Client {
 }
 
 func Reset() {
-	rdb := initRedisClient()
 	ctx := context.Background()
-	rdb.FlushAll(ctx)
+	RedisClient.FlushAll(ctx)
 }
 
 func Get(key string) (int, error) {
-	rdb := initRedisClient()
-	value, err := rdb.Get(ctx, key).Result()
+	value, err := RedisClient.Get(ctx, key).Result()
 	if err != nil {
 		return 0, err
 	}
@@ -38,18 +43,17 @@ func Get(key string) (int, error) {
 }
 
 func Set(key string, value int) {
-	rdb := initRedisClient()
-	rdb.Set(ctx, key, value, 0)
+	RedisClient.Set(ctx, key, value, 0)
 }
 
 func Decrease(key string, dmg int) {
 	value, _ := Get(key)
-	value = value - dmg
+	value -= dmg
 	Set(key, value)
 }
 
 func Increase(key string, heal int) {
 	value, _ := Get(key)
-	value = value + heal
+	value += heal
 	Set(key, value)
 }
