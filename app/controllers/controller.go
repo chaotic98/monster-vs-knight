@@ -24,7 +24,8 @@ func Get(c echo.Context) error {
 
 	if player.Interaction == "attack" {
 		dmg := actions.AttackMonster()
-		monsterHealth = actions.DecreaseMonsterHealth(dmg)
+		actions.DecreaseMonsterHealth(dmg)
+		monsterHealth = actions.GetMonsterHealth()
 
 		if monsterHealth <= 0 {
 			actions.Reset()

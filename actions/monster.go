@@ -12,14 +12,10 @@ import (
 var ctx = context.Background()
 
 func InitializeMonsterHealth() (int, error) {
-
 	rdb := initRedisClient()
 	monster, err := rdb.Get(ctx, "monster").Result()
 
-	//rdb.FlushAll(ctx)
-	//os.Exit(1)
 	if errors.Is(err, redis.Nil) {
-		log.Println("monster is set to 100")
 		err = rdb.Set(ctx, "monster", 100, 0).Err()
 		if err != nil {
 			log.Println("error while setting up the initial monster value: ", err.Error())
@@ -35,7 +31,7 @@ func InitializeMonsterHealth() (int, error) {
 	return newMonsterHealth, nil
 }
 
-func DecreaseMonsterHealth(dmg int) int {
+func DecreaseMonsterHealth(dmg int) {
 	rdb := initRedisClient()
 	monster, err := rdb.Get(ctx, "monster").Result()
 
@@ -44,9 +40,14 @@ func DecreaseMonsterHealth(dmg int) int {
 	err = rdb.Set(ctx, "monster", newValue, 0).Err()
 	if err != nil {
 		log.Println("Error setting counter:", err)
-		return 0
 	}
-	return newValue
+}
+
+func GetMonsterHealth() int {
+	rdb := initRedisClient()
+	monsterHealth, _ := rdb.Get(ctx, "monster").Result()
+	newMonsterHealth, _ := strconv.Atoi(monsterHealth)
+	return newMonsterHealth
 }
 
 func AttackPlayer() int {
