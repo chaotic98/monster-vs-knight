@@ -28,7 +28,7 @@ func Get(c echo.Context) error {
 
 	if player.Interaction == "attack" {
 		dmg := actions.AttackMonster()
-		actions.DecreaseMonsterHealth(dmg)
+		actions.Decrease("monster", dmg)
 		monsterHealth, _ = actions.Get("monster")
 
 		if monsterHealth <= 0 {
@@ -41,11 +41,13 @@ func Get(c echo.Context) error {
 		}
 	} else {
 		heal := 20
-		playerHealth = actions.IncreasePlayerHealth(heal)
+		actions.Increase("player", heal)
+		playerHealth, _ = actions.Get("player")
 	}
-	monsterAttackDamage := actions.AttackPlayer()
 
-	playerHealth = actions.DecreasePlayerHealth(monsterAttackDamage)
+	monsterAttackDamage := actions.AttackPlayer()
+	actions.Decrease("player", monsterAttackDamage)
+	playerHealth, _ = actions.Get("player")
 
 	if playerHealth <= 0 {
 		actions.Reset()
