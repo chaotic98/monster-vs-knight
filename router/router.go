@@ -2,7 +2,7 @@ package router
 
 import (
 	"github.com/labstack/echo/v4"
-	"monsterXknight/controllers"
+	"monsterXknight/app/controllers"
 )
 
 func NewRouter(e *echo.Echo) *echo.Echo {
