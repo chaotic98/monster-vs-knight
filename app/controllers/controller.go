@@ -1,8 +1,9 @@
 package controllers
 
 import (
+	"errors"
 	"github.com/labstack/echo/v4"
-	"log"
+	"github.com/redis/go-redis/v9"
 	"monsterXknight/actions"
 	"net/http"
 )
@@ -15,17 +16,20 @@ func Get(c echo.Context) error {
 	var player Player
 	c.Bind(&player)
 
-	monsterHealth, err := actions.InitializeMonsterHealth()
-	playerHealth, err := actions.InitializePlayerHealth()
+	monsterHealth, err := actions.Get("monster")
+	if errors.Is(err, redis.Nil) {
+		actions.Set("monster", 100)
+	}
 
-	if err != nil {
-		log.Println(err)
+	playerHealth, err := actions.Get("player")
+	if errors.Is(err, redis.Nil) {
+		actions.Set("player", 100)
 	}
 
 	if player.Interaction == "attack" {
 		dmg := actions.AttackMonster()
 		actions.DecreaseMonsterHealth(dmg)
-		monsterHealth = actions.GetMonsterHealth()
+		monsterHealth, _ = actions.Get("monster")
 
 		if monsterHealth <= 0 {
 			actions.Reset()
