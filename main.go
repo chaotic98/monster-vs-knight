@@ -3,11 +3,15 @@ package main
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"monsterXknight/actions"
 	"monsterXknight/router"
 	"net/http"
 )
 
 func main() {
+	actions.InitializeRedis()
+	defer actions.CloseClient()
+
 	e := echo.New()
 	e.Use(corsMiddleware())
 	e.Use(middleware.Logger())
