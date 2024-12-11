@@ -16,17 +16,11 @@ type Player struct {
 
 var ctx = context.Background()
 
-//var client *redis.Client
-
 func Get(c echo.Context) error {
 	var player Player
 	c.Bind(&player)
 
 	client := actions.GetClient()
-	//client.Set(ctx, "aaaa", "asd", 0)
-	//val, _ := client.Get(ctx, "aaaa").Result()
-	//fmt.Println("val is", val)
-	//os.Exit(1)
 
 	monsterHealth, err := client.Get(ctx, "monster").Result()
 	if errors.Is(err, redis.Nil) {
